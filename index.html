@@ -1,104 +1,121 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-  <title>Game Klik Kotak</title>
+  <meta charset="UTF-8">
+  <title>Game Klik Kotak Modern</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(to right, #1f4037, #99f2c8);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #fff;
+    }
+
+    #container {
+      background: #ffffff15;
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 30px;
       text-align: center;
-      font-family: Arial, sans-serif;
-      margin-top: 50px;
+      width: 90%;
+      max-width: 500px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     }
 
     input[type="text"] {
       padding: 10px;
-      width: 250px;
+      width: 80%;
+      border: none;
+      border-radius: 10px;
       font-size: 16px;
+      margin-bottom: 15px;
+      outline: none;
     }
 
     button {
       padding: 10px 20px;
       font-size: 16px;
-      margin-top: 10px;
-      background-color: #1a8e76;
+      background-color: #00c9a7;
       color: white;
       border: none;
-      border-radius: 5px;
+      border-radius: 10px;
       cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #00b395;
     }
 
     #kotak {
       width: 300px;
       height: 300px;
-      border: 2px solid black;
+      background: #ffffff22;
+      border-radius: 15px;
       margin: 20px auto;
       position: relative;
+      overflow: hidden;
     }
 
     .kotak-merah {
       width: 40px;
       height: 40px;
-      background-color: red;
+      background-color: #e63946;
       position: absolute;
+      border-radius: 8px;
+      transition: left 0.2s, top 0.2s;
     }
 
     #halamanGame {
       display: none;
     }
 
-    #timer {
-      font-size: 20px;
-      font-weight: bold;
+    #timer, #hasil, #durasi, #skor {
+      margin: 10px 0;
+      font-size: 18px;
     }
 
     #hasil {
-      font-size: 18px;
       font-weight: bold;
-      color: red;
-      margin-top: 10px;
     }
 
-    #durasi {
-      font-size: 16px;
-      margin-top: 5px;
+    #hasil.green {
+      color: #38b000;
     }
 
-    @keyframes zoom {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.5); }
-      100% { transform: scale(1); }
-    }
-
-    .animasi-click {
-      animation: zoom 0.3s ease;
+    #hasil.red {
+      color: #ff4d6d;
     }
   </style>
 </head>
 <body>
-
-  <!-- Suara -->
-  <audio id="suaraBenar" src="https://www.soundjay.com/button/beep-07.wav"></audio>
-  <audio id="suaraSalah" src="https://www.soundjay.com/button/beep-10.wav"></audio>
-
-  <!-- Halaman Login -->
-  <div id="halamanLogin">
-    <h1>Login untuk Main</h1>
-    <input type="text" id="nama" placeholder="Masukkan nama kamu"><br>
-    <button onclick="mulaiGame()">Mulai Game</button>
-  </div>
-
-  <!-- Halaman Game -->
-  <div id="halamanGame">
-    <h2>Game Klik Kotak</h2>
-    <p id="ucapan"></p>
-    <p id="timer">Waktu: 60 detik</p>
-    <p><strong>Target:</strong> Raih 50 skor dalam waktu 60 detik!</p>
-    <div id="kotak" onclick="acakKotak(event)">
-      <div class="kotak-merah" id="target"></div>
+  <div id="container">
+    <!-- Halaman Login -->
+    <div id="halamanLogin">
+      <h1>Login untuk Main</h1>
+      <input type="text" id="nama" placeholder="Masukkan nama kamu"><br>
+      <button onclick="mulaiGame()">Mulai Game</button>
     </div>
-    <p>Skor: <span id="skor">0</span></p>
-    <p>Skor Tertinggi: <span id="skorTertinggi">0</span></p>
-    <p id="hasil"></p>
-    <p id="durasi">Durasi bermain: 0 detik</p>
+
+    <!-- Halaman Game -->
+    <div id="halamanGame">
+      <h2>Game Klik Kotak</h2>
+      <p id="ucapan"></p>
+      <p id="timer">Waktu: 60 detik</p>
+      <p><strong>Target:</strong> 50 skor dalam 60 detik!</p>
+      <div id="kotak" onclick="acakKotak(event)">
+        <div class="kotak-merah" id="target"></div>
+      </div>
+      <p>Skor: <span id="skor">0</span></p>
+      <p id="hasil"></p>
+      <p id="durasi">Durasi bermain: 0 detik</p>
+    </div>
   </div>
 
   <script>
@@ -109,7 +126,7 @@
     const targetSkor = 50;
 
     function mulaiGame() {
-      const nama = document.getElementById("nama").value;
+      const nama = document.getElementById("nama").value.trim();
       if (nama) {
         document.getElementById("halamanLogin").style.display = "none";
         document.getElementById("halamanGame").style.display = "block";
@@ -122,14 +139,10 @@
         document.getElementById("timer").innerText = "Waktu: " + waktu + " detik";
         document.getElementById("durasi").innerText = "Durasi bermain: 0 detik";
         document.getElementById("hasil").innerText = "";
+        document.getElementById("hasil").className = "";
         document.getElementById("target").style.display = "block";
-
-        const skorTertinggi = localStorage.getItem("skorTertinggi") || 0;
-        document.getElementById("skorTertinggi").innerText = skorTertinggi;
-
-        const target = document.getElementById("target");
-        target.style.left = "50px";
-        target.style.top = "50px";
+        document.getElementById("target").style.left = "50px";
+        document.getElementById("target").style.top = "50px";
 
         interval = setInterval(() => {
           waktu--;
@@ -140,20 +153,13 @@
           if (waktu <= 0) {
             clearInterval(interval);
             document.getElementById("target").style.display = "none";
-
-            const skorTertinggiSebelumnya = localStorage.getItem("skorTertinggi") || 0;
-
+            const hasil = document.getElementById("hasil");
             if (skor >= targetSkor) {
-              document.getElementById("hasil").innerText = "Selamat! Kamu menang dengan skor: " + skor;
-              document.getElementById("hasil").style.color = "green";
+              hasil.innerText = "Selamat! Kamu menang dengan skor: " + skor;
+              hasil.className = "green";
             } else {
-              document.getElementById("hasil").innerText = "Waktu habis. Kamu kalah! Skor kamu: " + skor;
-              document.getElementById("hasil").style.color = "red";
-            }
-
-            if (skor > skorTertinggiSebelumnya) {
-              localStorage.setItem("skorTertinggi", skor);
-              document.getElementById("skorTertinggi").innerText = skor;
+              hasil.innerText = "Waktu habis. Kamu kalah! Skor kamu: " + skor;
+              hasil.className = "red";
             }
           }
         }, 1000);
@@ -179,23 +185,12 @@
         skor++;
         document.getElementById("skor").innerText = skor;
 
-        document.getElementById("suaraBenar").play();
-        target.classList.add("animasi-click");
-        setTimeout(() => target.classList.remove("animasi-click"), 300);
-
         const maxX = 260;
         const maxY = 260;
         const randomX = Math.floor(Math.random() * maxX);
         const randomY = Math.floor(Math.random() * maxY);
         target.style.left = randomX + "px";
         target.style.top = randomY + "px";
-      } else {
-        document.getElementById("suaraSalah").play();
-        const prevColor = target.style.backgroundColor;
-        target.style.backgroundColor = "gray";
-        setTimeout(() => {
-          target.style.backgroundColor = prevColor;
-        }, 300);
       }
     }
   </script>
