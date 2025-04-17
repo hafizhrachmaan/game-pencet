@@ -61,9 +61,23 @@
       font-size: 16px;
       margin-top: 5px;
     }
+
+    @keyframes zoom {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.5); }
+      100% { transform: scale(1); }
+    }
+
+    .animasi-click {
+      animation: zoom 0.3s ease;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Suara -->
+  <audio id="suaraBenar" src="https://www.soundjay.com/button/beep-07.wav"></audio>
+  <audio id="suaraSalah" src="https://www.soundjay.com/button/beep-10.wav"></audio>
 
   <!-- Halaman Login -->
   <div id="halamanLogin">
@@ -82,6 +96,7 @@
       <div class="kotak-merah" id="target"></div>
     </div>
     <p>Skor: <span id="skor">0</span></p>
+    <p>Skor Tertinggi: <span id="skorTertinggi">0</span></p>
     <p id="hasil"></p>
     <p id="durasi">Durasi bermain: 0 detik</p>
   </div>
@@ -100,7 +115,6 @@
         document.getElementById("halamanGame").style.display = "block";
         document.getElementById("ucapan").innerText = "Selamat datang, " + nama + "!";
 
-        // Reset skor dan waktu
         skor = 0;
         waktu = 60;
         durasiMain = 0;
@@ -110,12 +124,13 @@
         document.getElementById("hasil").innerText = "";
         document.getElementById("target").style.display = "block";
 
-        // Set posisi awal
+        const skorTertinggi = localStorage.getItem("skorTertinggi") || 0;
+        document.getElementById("skorTertinggi").innerText = skorTertinggi;
+
         const target = document.getElementById("target");
         target.style.left = "50px";
         target.style.top = "50px";
 
-        // Mulai timer
         interval = setInterval(() => {
           waktu--;
           durasiMain++;
@@ -125,12 +140,20 @@
           if (waktu <= 0) {
             clearInterval(interval);
             document.getElementById("target").style.display = "none";
+
+            const skorTertinggiSebelumnya = localStorage.getItem("skorTertinggi") || 0;
+
             if (skor >= targetSkor) {
               document.getElementById("hasil").innerText = "Selamat! Kamu menang dengan skor: " + skor;
               document.getElementById("hasil").style.color = "green";
             } else {
               document.getElementById("hasil").innerText = "Waktu habis. Kamu kalah! Skor kamu: " + skor;
               document.getElementById("hasil").style.color = "red";
+            }
+
+            if (skor > skorTertinggiSebelumnya) {
+              localStorage.setItem("skorTertinggi", skor);
+              document.getElementById("skorTertinggi").innerText = skor;
             }
           }
         }, 1000);
@@ -156,12 +179,23 @@
         skor++;
         document.getElementById("skor").innerText = skor;
 
+        document.getElementById("suaraBenar").play();
+        target.classList.add("animasi-click");
+        setTimeout(() => target.classList.remove("animasi-click"), 300);
+
         const maxX = 260;
         const maxY = 260;
         const randomX = Math.floor(Math.random() * maxX);
         const randomY = Math.floor(Math.random() * maxY);
         target.style.left = randomX + "px";
         target.style.top = randomY + "px";
+      } else {
+        document.getElementById("suaraSalah").play();
+        const prevColor = target.style.backgroundColor;
+        target.style.backgroundColor = "gray";
+        setTimeout(() => {
+          target.style.backgroundColor = prevColor;
+        }, 300);
       }
     }
   </script>
