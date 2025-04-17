@@ -92,6 +92,27 @@
     #hasil.red {
       color: #ff4d6d;
     }
+
+    .kotak-merah.klik-benar {
+      animation: zoom 0.2s ease;
+    }
+
+    #kotak.salah-klik {
+      animation: shake 0.3s ease;
+    }
+
+    @keyframes zoom {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.4); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      50% { transform: translateX(5px); }
+      75% { transform: translateX(-5px); }
+    }
   </style>
 </head>
 <body>
@@ -185,12 +206,20 @@
         skor++;
         document.getElementById("skor").innerText = skor;
 
+        // Efek klik benar
+        target.classList.add("klik-benar");
+        setTimeout(() => target.classList.remove("klik-benar"), 200);
+
         const maxX = 260;
         const maxY = 260;
         const randomX = Math.floor(Math.random() * maxX);
         const randomY = Math.floor(Math.random() * maxY);
         target.style.left = randomX + "px";
         target.style.top = randomY + "px";
+      } else {
+        // Efek klik salah
+        kotak.classList.add("salah-klik");
+        setTimeout(() => kotak.classList.remove("salah-klik"), 300);
       }
     }
   </script>
