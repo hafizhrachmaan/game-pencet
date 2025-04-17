@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Game Klik Kotak Modern</title>
+  <title>Game DELHAFZ</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -28,7 +28,7 @@
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
     }
 
-    input[type="text"] {
+    input[type="text"], select {
       padding: 10px;
       width: 80%;
       border: none;
@@ -76,7 +76,7 @@
       display: none;
     }
 
-    #timer, #hasil, #durasi, #skor {
+    #timer, #hasil, #durasi, #skor, #infoLevel {
       margin: 10px 0;
       font-size: 18px;
     }
@@ -113,6 +113,12 @@
       50% { transform: translateX(5px); }
       75% { transform: translateX(-5px); }
     }
+
+    #infoDurasiLogin {
+      margin-top: -10px;
+      font-size: 15px;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -121,21 +127,29 @@
     <div id="halamanLogin">
       <h1>Login untuk Main</h1>
       <input type="text" id="nama" placeholder="Masukkan nama kamu"><br>
+      <select id="level" onchange="tampilkanDurasi()">
+        <option value="mudah">Level Mudah</option>
+        <option value="sedang">Level Sedang</option>
+        <option value="sulit">Level Sulit</option>
+      </select><br>
+      <p id="infoDurasiLogin">Durasi: 60 detik</p>
       <button onclick="mulaiGame()">Mulai Game</button>
     </div>
 
     <!-- Halaman Game -->
     <div id="halamanGame">
-      <h2>Game Klik Kotak</h2>
+      <h2>Game DELHAFZ</h2>
       <p id="ucapan"></p>
+      <p id="infoLevel"></p>
       <p id="timer">Waktu: 60 detik</p>
-      <p><strong>Target:</strong> 50 skor dalam 60 detik!</p>
+      <p><strong>Target:</strong> 50 skor!</p>
       <div id="kotak" onclick="acakKotak(event)">
         <div class="kotak-merah" id="target"></div>
       </div>
       <p>Skor: <span id="skor">0</span></p>
       <p id="hasil"></p>
       <p id="durasi">Durasi bermain: 0 detik</p>
+      <p>Follow IG: @dfianoo @hafizhrachman</p>
     </div>
   </div>
 
@@ -144,17 +158,45 @@
     let waktu = 60;
     let durasiMain = 0;
     let interval;
+    let level = "mudah";
+    let delay = 300;
     const targetSkor = 50;
+
+    function tampilkanDurasi() {
+      const levelDipilih = document.getElementById("level").value;
+      const info = document.getElementById("infoDurasiLogin");
+
+      if (levelDipilih === "mudah") {
+        info.innerText = "Durasi: 60 detik";
+      } else if (levelDipilih === "sedang") {
+        info.innerText = "Durasi: 50 detik";
+      } else if (levelDipilih === "sulit") {
+        info.innerText = "Durasi: 40 detik";
+      }
+    }
 
     function mulaiGame() {
       const nama = document.getElementById("nama").value.trim();
+      level = document.getElementById("level").value;
+
       if (nama) {
+        if (level === "mudah") {
+          waktu = 60;
+          delay = 300;
+        } else if (level === "sedang") {
+          waktu = 50;
+          delay = 150;
+        } else if (level === "sulit") {
+          waktu = 40;
+          delay = 50;
+        }
+
         document.getElementById("halamanLogin").style.display = "none";
         document.getElementById("halamanGame").style.display = "block";
         document.getElementById("ucapan").innerText = "Selamat datang, " + nama + "!";
+        document.getElementById("infoLevel").innerText = "Level: " + level.charAt(0).toUpperCase() + level.slice(1);
 
         skor = 0;
-        waktu = 60;
         durasiMain = 0;
         document.getElementById("skor").innerText = skor;
         document.getElementById("timer").innerText = "Waktu: " + waktu + " detik";
@@ -206,7 +248,6 @@
         skor++;
         document.getElementById("skor").innerText = skor;
 
-        // Efek klik benar
         target.classList.add("klik-benar");
         setTimeout(() => target.classList.remove("klik-benar"), 200);
 
@@ -214,14 +255,19 @@
         const maxY = 260;
         const randomX = Math.floor(Math.random() * maxX);
         const randomY = Math.floor(Math.random() * maxY);
-        target.style.left = randomX + "px";
-        target.style.top = randomY + "px";
+
+        setTimeout(() => {
+          target.style.left = randomX + "px";
+          target.style.top = randomY + "px";
+        }, delay);
       } else {
-        // Efek klik salah
         kotak.classList.add("salah-klik");
         setTimeout(() => kotak.classList.remove("salah-klik"), 300);
       }
     }
+
+    // Tampilkan durasi default saat pertama kali halaman dimuat
+    tampilkanDurasi();
   </script>
 </body>
 </html>
